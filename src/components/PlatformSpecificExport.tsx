@@ -20,9 +20,11 @@ interface PlatformSpecificExportProps {
   results: Array<{
     image: File;
     title: string;
+    alternativeTitles?: string[];
     description: string;
     keywords: string[];
     category: string;
+    selectedTitleIndex?: number;
   }>;
 }
 
@@ -266,8 +268,13 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
 
     // Platform-specific CSV data preparation
     const csvData = results.map((result) => {
+      // Get the selected title based on selectedTitleIndex
+      const allTitles = [result.title, ...(result.alternativeTitles || [])];
+      const selectedTitleIndex = result.selectedTitleIndex || 0;
+      const selectedTitle = allTitles[selectedTitleIndex] || result.title;
+      
       // Truncate title if exceeds platform limit
-      let title = result.title;
+      let title = selectedTitle;
       if (title.length > platform.titleMaxLength) {
         title = title.substring(0, platform.titleMaxLength - 3) + '...';
       }

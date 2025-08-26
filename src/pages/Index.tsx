@@ -21,6 +21,7 @@ const Index = () => {
     category: string;
     image: File;
     processing?: boolean;
+    selectedTitleIndex?: number; // 0 = primary, 1 = alt1, 2 = alt2
   }[]>([]);
   const [processingProgress, setProcessingProgress] = useState(0);
 
@@ -60,7 +61,7 @@ const Index = () => {
         setResults(prev => 
           prev.map((item, index) => 
             index === i 
-              ? { ...result, image: imageFile, processing: false }
+              ? { ...result, image: imageFile, processing: false, selectedTitleIndex: 0 }
               : item
           )
         );
@@ -79,7 +80,7 @@ const Index = () => {
     const result = await generateMetadata(image, apiKey);
     if (result) {
       const updatedResults = [...results];
-      updatedResults[index] = { image, ...result };
+      updatedResults[index] = { image, ...result, selectedTitleIndex: 0 };
       setResults(updatedResults);
     }
   };
@@ -89,6 +90,7 @@ const Index = () => {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
+    selectedTitleIndex?: number;
   }) => {
     const updatedResults = [...results];
     updatedResults[index] = {
@@ -242,6 +244,7 @@ const Index = () => {
                 onRegenerate={() => handleSingleRegenerate(result.image, index)}
                 onMetadataUpdate={(updatedData) => handleMetadataUpdate(index, updatedData)}
                 processing={result.processing}
+                selectedTitleIndex={result.selectedTitleIndex || 0}
               />
             ))}
             {loading && (

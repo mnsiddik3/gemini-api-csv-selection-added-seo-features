@@ -20,10 +20,12 @@ interface ImageWithMetadataProps {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
+    selectedTitleIndex?: number;
   }) => void;
   processing?: boolean;
   progress?: number;
   totalImages?: number;
+  selectedTitleIndex?: number;
 }
 export const ImageWithMetadata = ({
   image,
@@ -37,7 +39,8 @@ export const ImageWithMetadata = ({
   onMetadataUpdate,
   processing = false,
   progress = 0,
-  totalImages = 1
+  totalImages = 1,
+  selectedTitleIndex = 0
 }: ImageWithMetadataProps) => {
   const [copiedIndex, setCopiedIndex] = useState<string | null>(null);
   const [topKeywords, setTopKeywords] = useState<string[]>(() => keywords.slice(0, 45));
@@ -176,6 +179,24 @@ export const ImageWithMetadata = ({
     }
   };
 
+  // Title selection function
+  const handleTitleSelection = (titleIndex: number) => {
+    onMetadataUpdate?.({
+      title: editTitleValue,
+      alternativeTitles,
+      description: editDescriptionValue,
+      keywords: topKeywords,
+      selectedTitleIndex: titleIndex
+    });
+    toast({
+      title: "Title Selected",
+      description: `Title ${titleIndex === 0 ? 'Primary' : `#${titleIndex}`} selected for CSV export.`
+    });
+  };
+
+  // Get all available titles
+  const allTitles = [title, ...(alternativeTitles || [])];
+  
   // Title edit functions
   const startEditTitle = () => {
     setEditingTitle(true);
@@ -340,6 +361,63 @@ export const ImageWithMetadata = ({
       {/* Title & Description */}
       <Card className="p-4 sm:p-6 bg-gradient-subtle">
         <div className="space-y-3 sm:space-y-4">
+          {/* Title Selection Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold text-foreground">CSV Export এর জন্য টাইটেল সিলেক্ট করুন</h3>
+              <Badge variant="outline" className="text-xs bg-brand-primary/10 border-brand-primary/30 text-brand-primary">
+                Required for Export
+              </Badge>
+            </div>
+            
+            <div className="space-y-2">
+              {allTitles.map((titleOption, titleIndex) => (
+                <div 
+                  key={titleIndex} 
+                  className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${
+                    selectedTitleIndex === titleIndex 
+                      ? 'border-brand-primary bg-brand-primary/5 ring-2 ring-brand-primary/20' 
+                      : 'border-border bg-background hover:border-brand-primary/50 hover:bg-brand-primary/5'
+                  }`}
+                  onClick={() => handleTitleSelection(titleIndex)}
+                >
+                  <input
+                    type="radio"
+                    name={`title-selection-${index}`}
+                    value={titleIndex}
+                    checked={selectedTitleIndex === titleIndex}
+                    onChange={() => handleTitleSelection(titleIndex)}
+                    className="mt-1 text-brand-primary focus:ring-brand-primary focus:ring-offset-0"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <label className="text-sm font-medium text-foreground cursor-pointer">
+                        {titleIndex === 0 ? 'Primary Title' : `Alternative Title ${titleIndex}`}
+                      </label>
+                      {selectedTitleIndex === titleIndex && (
+                        <Badge variant="default" className="text-xs bg-brand-primary text-white">
+                          Selected for CSV
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{titleOption}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      copyToClipboard(titleOption);
+                    }}
+                    className="h-8 w-8 shrink-0"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div>
             <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">Primary Adobe Stock Title</h3>
             {editingTitle ? <div className="flex items-center gap-2 bg-muted/20 rounded-md p-2 border border-brand-primary/30">

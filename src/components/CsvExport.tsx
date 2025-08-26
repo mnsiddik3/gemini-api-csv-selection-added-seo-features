@@ -26,9 +26,11 @@ interface CsvExportProps {
   results: Array<{
     image: File;
     title: string;
+    alternativeTitles?: string[];
     description: string;
     keywords: string[];
     category: string;
+    selectedTitleIndex?: number;
   }>;
 }
 
@@ -90,9 +92,14 @@ export const CsvExport = ({ results }: CsvExportProps) => {
 
     // Prepare CSV data with platform-specific formatting
     const csvData: CsvData[] = results.map((result) => {
-      const title = result.title.length > platform.titleMaxLength 
-        ? result.title.substring(0, platform.titleMaxLength - 3) + '...'
-        : result.title;
+      // Get the selected title based on selectedTitleIndex
+      const allTitles = [result.title, ...(result.alternativeTitles || [])];
+      const selectedTitleIndex = result.selectedTitleIndex || 0;
+      const selectedTitle = allTitles[selectedTitleIndex] || result.title;
+      
+      const title = selectedTitle.length > platform.titleMaxLength 
+        ? selectedTitle.substring(0, platform.titleMaxLength - 3) + '...'
+        : selectedTitle;
       
       const description = result.description.length > platform.descriptionMaxLength
         ? result.description.substring(0, platform.descriptionMaxLength - 3) + '...'
