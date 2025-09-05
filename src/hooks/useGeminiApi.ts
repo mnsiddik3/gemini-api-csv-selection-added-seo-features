@@ -213,8 +213,8 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
               parts: [
                 { text: prompt },
                 {
-                  inline_data: {
-                    mime_type: imageFile.type,
+                  inlineData: {
+                    mimeType: imageFile.type,
                     data: base64Image
                   }
                 }
