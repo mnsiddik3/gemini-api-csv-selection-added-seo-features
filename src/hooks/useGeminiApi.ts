@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { optimizeImageForGemini } from '@/lib/imageUtils';
 
 interface MetadataResult {
   title: string;
@@ -139,19 +140,10 @@ export const useGeminiApi = () => {
       return null;
     }
 
-    const makeApiCall = async (retryCount = 0): Promise<any> => {
+    const makeApiCall = async (retryCount = 0, alternateOrder = false): Promise<any> => {
       try {
         // Convert image to base64
-        const base64Image = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const base64 = reader.result as string;
-            // Remove data:image/...;base64, prefix
-            const base64Data = base64.split(',')[1];
-            resolve(base64Data);
-          };
-          reader.readAsDataURL(imageFile);
-        });
+        const { base64Data: base64Image, mimeType } = await optimizeImageForGemini(imageFile);
 
         const prompt = `
 Analyze this image and create Adobe Stock metadata:
@@ -203,6 +195,16 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
 
         // Try gemini-1.5-pro for better results when flash is overloaded
         const model = retryCount >= 2 ? 'gemini-1.5-pro-latest' : 'gemini-1.5-flash-latest';
+        const parts = alternateOrder
+          ? [
+              { text: prompt },
+              { inlineData: { mimeType, data: base64Image } }
+            ]
+          : [
+              { inlineData: { mimeType, data: base64Image } },
+              { text: prompt }
+            ];
+
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: {
@@ -211,23 +213,15 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
           body: JSON.stringify({
             contents: [{
               role: 'user',
-              parts: [
-                {
-                  inlineData: {
-                    mimeType: imageFile.type,
-                    data: base64Image
-                  }
-                },
-                { text: prompt }
-              ]
+              parts
             }]
           })
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);
-          
-          // Check if it's a 503 error (service unavailable/overloaded)
+
+          // Handle overloaded 503 with smart retry/backoff
           if (response.status === 503 && retryCount < 8) {
             const delay = getAdaptiveDelay(retryCount, true);
             toast({
@@ -235,11 +229,20 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
               description: `Switching to ${retryCount >= 2 ? 'Pro model' : 'Flash model'}. Waiting ${delay/1000}s... (${retryCount + 1}/8)`,
               variant: "default",
             });
-            
             await new Promise(resolve => setTimeout(resolve, delay));
-            return makeApiCall(retryCount + 1);
+            return makeApiCall(retryCount + 1, alternateOrder);
           }
-          
+
+          // Retry once with alternate parts order for potential argument validation quirks
+          if (response.status === 400 && !alternateOrder) {
+            toast({
+              title: "Retrying Request",
+              description: "Trying an alternate request format to avoid INVALID_ARGUMENT...",
+              variant: "default",
+            });
+            return makeApiCall(retryCount, true);
+          }
+
           if (response.status === 503) {
             toast({
               title: "API Overloaded",
@@ -247,7 +250,7 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
               variant: "destructive",
             });
           }
-          
+
           throw new Error(`API Error: ${response.status} ${response.statusText}${errorData?.error?.message ? ` - ${errorData.error.message}` : ''}`);
         }
 
