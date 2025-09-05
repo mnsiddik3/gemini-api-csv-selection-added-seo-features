@@ -202,7 +202,7 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
         `;
 
         // Try gemini-1.5-pro for better results when flash is overloaded
-        const model = retryCount >= 2 ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
+        const model = retryCount >= 2 ? 'gemini-1.5-pro-latest' : 'gemini-1.5-flash-latest';
         const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
           method: 'POST',
           headers: {
@@ -210,14 +210,15 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
           },
           body: JSON.stringify({
             contents: [{
+              role: 'user',
               parts: [
-                { text: prompt },
                 {
                   inlineData: {
                     mimeType: imageFile.type,
                     data: base64Image
                   }
-                }
+                },
+                { text: prompt }
               ]
             }]
           })
