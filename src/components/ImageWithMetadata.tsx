@@ -310,19 +310,20 @@ export const ImageWithMetadata = ({
     return <div className="space-y-4 sm:space-y-6">
         <Card className="p-4 sm:p-6 bg-gradient-subtle">
           <div className="space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between gap-2 mb-2 sm:mb-4">
-              <h3 className="text-lg sm:text-xl font-semibold text-foreground">Image {index + 1}: {image.name}</h3>
+            <div className="flex items-center gap-2 mb-2 sm:mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-foreground">Image {index + 1}:</h3>
+              <span className="text-lg sm:text-xl font-semibold text-foreground">{image.name}</span>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => copyToClipboard(image.name, `filename-${index}`)}
-                className="h-8 w-8 shrink-0"
+                className="h-6 w-6 shrink-0 ml-1"
                 title="Copy file name"
               >
                 {copiedIndex === `filename-${index}` ? (
-                  <Check className="w-4 h-4 text-green-600" />
+                  <Check className="w-3 h-3 text-green-600" />
                 ) : (
-                  <Copy className="w-4 h-4" />
+                  <Copy className="w-3 h-3" />
                 )}
               </Button>
             </div>
@@ -346,19 +347,20 @@ export const ImageWithMetadata = ({
       {/* Image Display */}
       <Card className="p-4 sm:p-6 bg-gradient-subtle">
         <div className="space-y-3 sm:space-y-4">
-          <div className="flex items-center justify-between gap-2 mb-2 sm:mb-4">
-            <h3 className="text-lg sm:text-xl font-semibold text-foreground">Image {index + 1}: {image.name}</h3>
+          <div className="flex items-center gap-2 mb-2 sm:mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground">Image {index + 1}:</h3>
+            <span className="text-lg sm:text-xl font-semibold text-foreground">{image.name}</span>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => copyToClipboard(image.name, `filename-${index}`)}
-              className="h-8 w-8 shrink-0"
+              className="h-6 w-6 shrink-0 ml-1"
               title="Copy file name"
             >
               {copiedIndex === `filename-${index}` ? (
-                <Check className="w-4 h-4 text-green-600" />
+                <Check className="w-3 h-3 text-green-600" />
               ) : (
-                <Copy className="w-4 h-4" />
+                <Copy className="w-3 h-3" />
               )}
             </Button>
           </div>
