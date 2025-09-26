@@ -228,7 +228,17 @@ export const ImageWithMetadata = ({
     setEditAltTitleValue(currentTitle);
   };
   const saveEditAltTitle = () => {
-    if (editAltTitleValue.trim()) {
+    if (editAltTitleValue.trim() && editingAltTitle !== null) {
+      const updatedAltTitles = [...(alternativeTitles || [])];
+      updatedAltTitles[editingAltTitle] = editAltTitleValue.trim();
+      
+      onMetadataUpdate?.({
+        title: editTitleValue,
+        alternativeTitles: updatedAltTitles,
+        description: editDescriptionValue,
+        keywords: topKeywords
+      });
+      
       setEditingAltTitle(null);
       setEditAltTitleValue('');
       toast({
