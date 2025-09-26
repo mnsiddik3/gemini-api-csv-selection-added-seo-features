@@ -194,7 +194,7 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
         `;
 
         // Try gemini-1.5-pro for better results when flash is overloaded
-        const model = retryCount >= 2 ? 'gemini-1.5-pro-latest' : 'gemini-1.5-flash-latest';
+        const model = retryCount >= 2 ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
         const parts = alternateOrder
           ? [
               { text: prompt },
