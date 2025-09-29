@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { optimizeMediaForGemini } from '@/lib/imageUtils';
+import { optimizeImageForGemini } from '@/lib/imageUtils';
 
 interface MetadataResult {
   title: string;
@@ -142,11 +142,11 @@ export const useGeminiApi = () => {
 
     const makeApiCall = async (retryCount = 0, alternateOrder = false): Promise<any> => {
       try {
-        // Convert media to base64
-        const { base64Data: base64Image, mimeType } = await optimizeMediaForGemini(imageFile);
+        // Convert image to base64
+        const { base64Data: base64Image, mimeType } = await optimizeImageForGemini(imageFile);
 
         const prompt = `
-Analyze this image or video and create Adobe Stock metadata:
+Analyze this image and create Adobe Stock metadata:
 
 FOCUS ON IMAGE CONTENT: Describe exactly what you see, not generic terms.
 

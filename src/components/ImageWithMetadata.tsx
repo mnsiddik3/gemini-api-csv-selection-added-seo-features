@@ -338,33 +338,12 @@ export const ImageWithMetadata = ({
               </Button>
             </div>
             <div className="flex justify-center">
-              {imageUrl ? (
-                image.type.startsWith('video/') ? (
-                  <video 
-                    src={imageUrl} 
-                    controls 
-                    className="max-w-full max-h-64 sm:max-h-80 lg:max-h-96 rounded-lg shadow-lg"
-                    onError={(e) => {
-                      console.error('Video failed to load:', e);
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <img 
-                    src={imageUrl} 
-                    alt={`Uploaded image ${index + 1}`} 
-                    className="max-w-full max-h-64 sm:max-h-80 lg:max-h-96 rounded-lg shadow-lg object-contain" 
-                    onError={(e) => {
-                      console.error('Image failed to load:', e);
-                      e.currentTarget.style.display = 'none';
-                    }} 
-                  />
-                )
-              ) : (
-                <div className="w-64 h-64 bg-muted rounded-lg flex items-center justify-center">
-                  <p className="text-muted-foreground">Media failed to load</p>
-                </div>
-              )}
+              {imageUrl ? <img src={imageUrl} alt={`Uploaded image ${index + 1}`} className="max-w-full max-h-64 sm:max-h-80 lg:max-h-96 rounded-lg shadow-lg object-contain" onError={e => {
+              console.error('Image failed to load:', e);
+              e.currentTarget.style.display = 'none';
+            }} /> : <div className="w-64 h-64 bg-muted rounded-lg flex items-center justify-center">
+                  <p className="text-muted-foreground">Image failed to load</p>
+                </div>}
             </div>
             <div className="text-center py-3 sm:py-4">
               <div className="w-6 h-6 sm:w-8 sm:h-8 border-4 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin mx-auto mb-2"></div>
@@ -396,33 +375,12 @@ export const ImageWithMetadata = ({
             </Button>
           </div>
           <div className="flex justify-center">
-            {imageUrl ? (
-              image.type.startsWith('video/') ? (
-                <video 
-                  src={imageUrl} 
-                  controls 
-                  className="max-w-full max-h-64 sm:max-h-80 lg:max-h-96 rounded-lg shadow-lg"
-                  onError={(e) => {
-                    console.error('Video failed to load:', e);
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              ) : (
-                <img 
-                  src={imageUrl} 
-                  alt={`Uploaded image ${index + 1}`} 
-                  className="max-w-full max-h-64 sm:max-h-80 lg:max-h-96 rounded-lg shadow-lg object-contain" 
-                  onError={(e) => {
-                    console.error('Image failed to load:', e);
-                    e.currentTarget.style.display = 'none';
-                  }} 
-                />
-              )
-            ) : (
-              <div className="w-64 h-64 bg-muted rounded-lg flex items-center justify-center">
-                <p className="text-muted-foreground">Media failed to load</p>
-              </div>
-            )}
+            {imageUrl ? <img src={imageUrl} alt={`Uploaded image ${index + 1}`} className="max-w-full max-h-64 sm:max-h-80 lg:max-h-96 rounded-lg shadow-lg object-contain" onError={e => {
+            console.error('Image failed to load:', e);
+            e.currentTarget.style.display = 'none';
+          }} /> : <div className="w-64 h-64 bg-muted rounded-lg flex items-center justify-center">
+                <p className="text-muted-foreground">Image failed to load</p>
+              </div>}
             </div>
             
             {/* Category Display */}
