@@ -8,21 +8,17 @@ import { ImageWithMetadata } from '@/components/ImageWithMetadata';
 import { CsvExport } from '@/components/CsvExport';
 import { PlatformSpecificExport } from '@/components/PlatformSpecificExport';
 import { useGeminiApi } from '@/hooks/useGeminiApi';
+import { SeoOptimizedResult } from '@/types/seo';
 import heroImage from '@/assets/hero-image.jpg';
 
 const Index = () => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini-api-key') || '');
-  const [results, setResults] = useState<{
-    title: string;
-    alternativeTitles?: string[];
-    description: string;
-    keywords: string[];
-    category: string;
+  const [results, setResults] = useState<(SeoOptimizedResult & {
     image: File;
     processing?: boolean;
     selectedTitleIndex?: number; // 0 = primary, 1 = alt1, 2 = alt2
-  }[]>([]);
+  })[]>([]);
   const [processingProgress, setProcessingProgress] = useState(0);
 
   const { generateBulkMetadata, generateMetadata, loading } = useGeminiApi();
@@ -50,6 +46,16 @@ const Index = () => {
           description: 'Generating metadata...',
           keywords: [],
           category: '',
+          seoKeywords: [],
+          seoMetrics: {
+            titleScore: 0,
+            descriptionScore: 0,
+            keywordDensity: 0,
+            readabilityScore: 0,
+            competitorAlignment: 0,
+            trendRelevance: 0
+          },
+          optimizationSuggestions: [],
           image: imageFile,
           processing: true
         }
@@ -232,7 +238,7 @@ const Index = () => {
         {(results.length > 0 || loading) && (
           <div className="space-y-8 sm:space-y-12">
             {results.map((result, index) => (
-              <ImageWithMetadata
+             <ImageWithMetadata
                 key={`${result.image.name}-${result.image.size}-${index}`}
                 image={result.image}
                 title={result.title}
@@ -240,6 +246,9 @@ const Index = () => {
                 description={result.description}
                 keywords={result.keywords}
                 category={result.category}
+                seoMetrics={result.seoMetrics}
+                seoKeywords={result.seoKeywords}
+                optimizationSuggestions={result.optimizationSuggestions}
                 index={index}
                 onRegenerate={() => handleSingleRegenerate(result.image, index)}
                 onMetadataUpdate={(updatedData) => handleMetadataUpdate(index, updatedData)}
