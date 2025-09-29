@@ -114,7 +114,7 @@ const Index = () => {
               </div>
               
               <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold leading-tight">
-                Microstock Media
+                Microstock Image
                 <br />
                 <span className="bg-gradient-to-r from-brand-accent to-yellow-300 bg-clip-text text-transparent">
                   Metadata Generator
@@ -122,7 +122,7 @@ const Index = () => {
               </h1>
               
               <p className="text-base lg:text-xl text-white/90 leading-relaxed max-w-lg mx-auto lg:mx-0">
-                Generate SEO-optimized titles, descriptions and 50 keywords for your microstock images and videos using AI. 
+                Generate SEO-optimized titles, descriptions and 50 keywords for your microstock images using AI. 
                 Get instant results with Google Gemini AI for maximum sales potential.
               </p>
               

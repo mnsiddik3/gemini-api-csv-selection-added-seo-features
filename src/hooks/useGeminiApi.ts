@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { optimizeMediaForGemini } from '@/lib/imageUtils';
+import { optimizeImageForGemini } from '@/lib/imageUtils';
 
 interface MetadataResult {
   title: string;
@@ -142,8 +142,8 @@ export const useGeminiApi = () => {
 
     const makeApiCall = async (retryCount = 0, alternateOrder = false): Promise<any> => {
       try {
-        // Convert media to base64
-        const { base64Data: base64Image, mimeType } = await optimizeMediaForGemini(imageFile);
+        // Convert image to base64
+        const { base64Data: base64Image, mimeType } = await optimizeImageForGemini(imageFile);
 
         const prompt = `
 Analyze this image or video and create Adobe Stock metadata:
@@ -193,8 +193,8 @@ CATEGORY- [category]
 KEYWORDS- word1, word2, word3, [continue to 50 words]
         `;
 
-        // Use latest stable Gemini models
-        const model = retryCount >= 2 ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
+        // Use correct stable Gemini model names
+        const model = retryCount >= 2 ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
         const parts = alternateOrder
           ? [
               { text: prompt },
