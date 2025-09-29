@@ -8,6 +8,7 @@ import { Copy, Star, Check, Plus, X, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { SeoAnalysis } from '@/types/seo';
 import { SeoMetrics } from '@/components/SeoMetrics';
+import { TitleScores } from '@/components/TitleScores';
 
 interface ImageWithMetadataProps {
   image: File;
@@ -424,65 +425,17 @@ export const ImageWithMetadata = ({
         </div>
       </Card>
 
+      {/* Title SEO Scores & Selection */}
+      <TitleScores 
+        allTitles={allTitles}
+        selectedTitleIndex={selectedTitleIndex}
+        onTitleSelection={handleTitleSelection}
+        index={index}
+      />
+
       {/* Title & Description */}
       <Card className="p-4 sm:p-6 bg-gradient-subtle">
         <div className="space-y-3 sm:space-y-4">
-          {/* Title Selection Section */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <h3 className="text-base sm:text-lg font-semibold text-foreground">CSV Export এর জন্য টাইটেল সিলেক্ট করুন</h3>
-              <Badge variant="outline" className="text-xs bg-brand-primary/10 border-brand-primary/30 text-brand-primary">
-                Required for Export
-              </Badge>
-            </div>
-            
-            <div className="space-y-2">
-              {allTitles.map((titleOption, titleIndex) => (
-                <div 
-                  key={titleIndex} 
-                  className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${
-                    selectedTitleIndex === titleIndex 
-                      ? 'border-brand-primary bg-brand-primary/5 ring-2 ring-brand-primary/20' 
-                      : 'border-border bg-background hover:border-brand-primary/50 hover:bg-brand-primary/5'
-                  }`}
-                  onClick={() => handleTitleSelection(titleIndex)}
-                >
-                  <input
-                    type="radio"
-                    name={`title-selection-${index}`}
-                    value={titleIndex}
-                    checked={selectedTitleIndex === titleIndex}
-                    onChange={() => handleTitleSelection(titleIndex)}
-                    className="mt-1 text-brand-primary focus:ring-brand-primary focus:ring-offset-0"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <label className="text-sm font-medium text-foreground cursor-pointer">
-                        {titleIndex === 0 ? 'Primary Title' : `Alternative Title ${titleIndex}`}
-                      </label>
-                      {selectedTitleIndex === titleIndex && (
-                        <Badge variant="default" className="text-xs bg-brand-primary text-white">
-                          Selected for CSV
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground">{titleOption}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      copyToClipboard(titleOption);
-                    }}
-                    className="h-8 w-8 shrink-0"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
 
           <div>
             <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">Primary Adobe Stock Title</h3>
@@ -637,25 +590,36 @@ export const ImageWithMetadata = ({
           </div>}
       </Card>
 
-      {/* SEO Analysis Section */}
+      {/* Advanced SEO Features */}
       {seoAnalysis && (
-        <SeoMetrics 
-          seoAnalysis={seoAnalysis}
-          onCopyKeywords={(keywords) => {
-            const updatedKeywords = [...topKeywords, ...keywords].slice(0, 50);
-            setTopKeywords(updatedKeywords);
-            onMetadataUpdate?.({
-              title: editTitleValue,
-              alternativeTitles,
-              description: editDescriptionValue,
-              keywords: updatedKeywords
-            });
-            toast({
-              title: "SEO Keywords Added!",
-              description: `${keywords.length} SEO-optimized keywords added.`
-            });
-          }}
-        />
+        <Card className="p-4 sm:p-6 bg-gradient-accent/5 border-brand-accent/20">
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">
+              Added SEO Features
+            </h3>
+            <Badge variant="outline" className="text-xs bg-brand-accent/10 border-brand-accent/30 text-brand-accent">
+              AI Optimized
+            </Badge>
+          </div>
+          
+          <SeoMetrics 
+            seoAnalysis={seoAnalysis}
+            onCopyKeywords={(keywords) => {
+              const updatedKeywords = [...topKeywords, ...keywords].slice(0, 50);
+              setTopKeywords(updatedKeywords);
+              onMetadataUpdate?.({
+                title: editTitleValue,
+                alternativeTitles,
+                description: editDescriptionValue,
+                keywords: updatedKeywords
+              });
+              toast({
+                title: "SEO Keywords Added!",
+                description: `${keywords.length} SEO-optimized keywords added.`
+              });
+            }}
+          />
+        </Card>
       )}
     </div>;
 };
