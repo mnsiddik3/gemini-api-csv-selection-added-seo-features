@@ -171,11 +171,12 @@ Choose main theme: Business, Technology, Nature, People, Food, Travel, Art, etc.
 KEYWORDS (exactly 50):
 Create balanced keywords across these categories:
 - IMAGE CONTENT (10 keywords): What you actually see in the image
+- NUMBERS (10 keywords): If numbers are visible in image, add number keywords after first 10: individual numbers (1, 2, 3), ordinals (1st, 2nd, 3rd, 5th, 10th), spelled ordinals (first, second, third, fifth, tenth), anniversary terms. If no numbers visible, use business keywords instead.
 - BUSINESS (8 keywords): Commercial terms, industries
 - VISUAL STYLE (8 keywords): Colors, composition, design style  
-- PURPOSE (8 keywords): Usage, application, context
-- INDUSTRY (8 keywords): Relevant sectors, markets
-- MATERIALS/OBJECTS (8 keywords): Physical elements, textures
+- PURPOSE (6 keywords): Usage, application, context
+- INDUSTRY (4 keywords): Relevant sectors, markets
+- MATERIALS/OBJECTS (4 keywords): Physical elements, textures
 
 KEYWORD RULES:
 - Each must be completely unique (no synonyms)
