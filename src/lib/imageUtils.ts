@@ -26,7 +26,22 @@ export const revokeImageUrl = (url: string): void => {
 };
 
 /**
- * Validates image file type and size
+ * Validates media file type and size (images and videos)
+ */
+export const validateMediaFile = (file: File, maxSizeInMB: number = 100): boolean => {
+  if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+    return false;
+  }
+  
+  if (file.size > maxSizeInMB * 1024 * 1024) {
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Validates image file type and size (backward compatibility)
  */
 export const validateImage = (file: File, maxSizeInMB: number = 60): boolean => {
   if (!file.type.startsWith('image/')) {
@@ -119,4 +134,36 @@ export const optimizeImageForGemini = async (
     });
     return { base64Data: dataUrl.split(',')[1] || '', mimeType: file.type || 'image/jpeg' };
   }
+};
+
+/**
+ * Optimize media file for Gemini API (handles both images and videos)
+ * For images: resizes and encodes to JPEG base64
+ * For videos: returns original base64 data
+ */
+export const optimizeMediaForGemini = async (
+  file: File,
+  maxSide: number = 2048,
+  quality: number = 0.9
+): Promise<{ base64Data: string; mimeType: string }> => {
+  // For images, use existing optimization
+  if (file.type.startsWith('image/')) {
+    return optimizeImageForGemini(file, maxSide, quality);
+  }
+  
+  // For videos, convert to base64 without optimization
+  if (file.type.startsWith('video/')) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result as string;
+        const base64Data = dataUrl.split(',')[1] || '';
+        resolve({ base64Data, mimeType: file.type });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  
+  throw new Error('Unsupported file type');
 };
