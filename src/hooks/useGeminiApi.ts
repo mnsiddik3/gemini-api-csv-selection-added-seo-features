@@ -2,12 +2,22 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { optimizeImageForGemini } from '@/lib/imageUtils';
 
+import { SeoAnalysis } from '@/types/seo';
+import { 
+  analyzeKeywordMetrics, 
+  generateSeoOptimization, 
+  generateCompetitorInsights, 
+  calculateSeoScore, 
+  generateSeoRecommendations 
+} from '@/utils/seoHelpers';
+
 interface MetadataResult {
   title: string;
   alternativeTitles?: string[];
   description: string;
   keywords: string[];
   category: string;
+  seoAnalysis?: SeoAnalysis;
 }
 
 // Function to clean symbols and punctuation from keywords
@@ -312,12 +322,27 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
         }
       });
 
+      // Generate SEO analysis
+      const keywordMetrics = analyzeKeywordMetrics(keywords.length > 0 ? keywords : ['generated', 'metadata']);
+      const optimization = generateSeoOptimization(keywordMetrics);
+      const competitorInsights = generateCompetitorInsights(category || 'General', keywords);
+      const seoScore = calculateSeoScore(keywordMetrics, title || 'Generated Title', description || 'Generated description');
+      const recommendations = generateSeoRecommendations(optimization, competitorInsights, seoScore);
+      
+      const seoAnalysis: SeoAnalysis = {
+        optimization,
+        competitorInsights,
+        recommendations,
+        seoScore
+      };
+
       return { 
         title: title || 'Generated Title', 
         alternativeTitles: alternativeTitles.filter(t => t), 
         description: description || 'Generated description', 
         keywords: keywords.length > 0 ? keywords : ['generated', 'metadata'], 
-        category: category || 'General' 
+        category: category || 'General',
+        seoAnalysis
       };
 
     } catch (error) {

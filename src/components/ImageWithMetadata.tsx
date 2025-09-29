@@ -6,6 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Copy, Star, Check, Plus, X, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { SeoAnalysis } from '@/types/seo';
+import { SeoMetrics } from '@/components/SeoMetrics';
+
 interface ImageWithMetadataProps {
   image: File;
   title: string;
@@ -26,6 +29,7 @@ interface ImageWithMetadataProps {
   progress?: number;
   totalImages?: number;
   selectedTitleIndex?: number;
+  seoAnalysis?: SeoAnalysis;
 }
 export const ImageWithMetadata = ({
   image,
@@ -40,7 +44,8 @@ export const ImageWithMetadata = ({
   processing = false,
   progress = 0,
   totalImages = 1,
-  selectedTitleIndex = 0
+  selectedTitleIndex = 0,
+  seoAnalysis
 }: ImageWithMetadataProps) => {
   const [copiedIndex, setCopiedIndex] = useState<string | null>(null);
   const [topKeywords, setTopKeywords] = useState<string[]>(() => keywords.slice(0, 45));
@@ -631,5 +636,26 @@ export const ImageWithMetadata = ({
             </div>
           </div>}
       </Card>
+
+      {/* SEO Analysis Section */}
+      {seoAnalysis && (
+        <SeoMetrics 
+          seoAnalysis={seoAnalysis}
+          onCopyKeywords={(keywords) => {
+            const updatedKeywords = [...topKeywords, ...keywords].slice(0, 50);
+            setTopKeywords(updatedKeywords);
+            onMetadataUpdate?.({
+              title: editTitleValue,
+              alternativeTitles,
+              description: editDescriptionValue,
+              keywords: updatedKeywords
+            });
+            toast({
+              title: "SEO Keywords Added!",
+              description: `${keywords.length} SEO-optimized keywords added.`
+            });
+          }}
+        />
+      )}
     </div>;
 };

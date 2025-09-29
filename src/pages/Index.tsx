@@ -8,6 +8,7 @@ import { ImageWithMetadata } from '@/components/ImageWithMetadata';
 import { CsvExport } from '@/components/CsvExport';
 import { PlatformSpecificExport } from '@/components/PlatformSpecificExport';
 import { useGeminiApi } from '@/hooks/useGeminiApi';
+import { SeoAnalysis } from '@/types/seo';
 import heroImage from '@/assets/hero-image.jpg';
 
 const Index = () => {
@@ -22,6 +23,7 @@ const Index = () => {
     image: File;
     processing?: boolean;
     selectedTitleIndex?: number; // 0 = primary, 1 = alt1, 2 = alt2
+    seoAnalysis?: SeoAnalysis;
   }[]>([]);
   const [processingProgress, setProcessingProgress] = useState(0);
 
@@ -245,6 +247,7 @@ const Index = () => {
                 onMetadataUpdate={(updatedData) => handleMetadataUpdate(index, updatedData)}
                 processing={result.processing}
                 selectedTitleIndex={result.selectedTitleIndex || 0}
+                seoAnalysis={result.seoAnalysis}
               />
             ))}
             {loading && (
