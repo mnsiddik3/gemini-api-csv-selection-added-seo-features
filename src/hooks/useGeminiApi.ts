@@ -194,7 +194,7 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
         `;
 
         // Use correct stable Gemini model names
-        const model = retryCount >= 2 ? 'gemini-1.5-pro' : 'gemini-1.5-flash';
+        const model = retryCount >= 2 ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
         const parts = alternateOrder
           ? [
               { text: prompt },
