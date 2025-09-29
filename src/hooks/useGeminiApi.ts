@@ -39,10 +39,10 @@ const filterUniqueKeywords = (keywords: string[]): string[] => {
     'cool', 'fresh', 'clean', 'simple', 'elegant', 'stylish', 'trendy'
   ];
   
+  // Only filter generic color terms, keep valuable material colors like gold, silver, etc.
   const colorWords = [
-    'white', 'black', 'red', 'blue', 'green', 'yellow', 'orange', 'purple',
-    'pink', 'brown', 'gray', 'grey', 'silver', 'gold', 'colorful', 'bright',
-    'dark', 'light', 'color', 'colors', 'colour', 'colours'
+    'colorful', 'bright', 'dark', 'light', 'color', 'colors', 'colour', 'colours',
+    'multicolor', 'multicolored', 'rainbow', 'vibrant', 'pastel', 'neon'
   ];
   
   const shapeWords = [
