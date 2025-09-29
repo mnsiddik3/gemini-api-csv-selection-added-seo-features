@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { optimizeImageForGemini } from '@/lib/imageUtils';
-import { useSeoOptimization } from './useSeoOptimization';
-import { SeoOptimizedResult } from '@/types/seo';
 
 interface MetadataResult {
   title: string;
@@ -117,7 +115,6 @@ export const useGeminiApi = () => {
   const [loading, setLoading] = useState(false);
   const [processingQueue, setProcessingQueue] = useState(false);
   const { toast } = useToast();
-  const { optimizeMetadata } = useSeoOptimization();
 
   // Smart delay calculation based on API load
   const getAdaptiveDelay = (retryCount: number, isOverloaded: boolean = false) => {
@@ -133,7 +130,7 @@ export const useGeminiApi = () => {
     return baseDelay + (index * 2000); // Progressive delay
   };
 
-  const generateMetadata = async (imageFile: File, apiKey: string): Promise<SeoOptimizedResult | null> => {
+  const generateMetadata = async (imageFile: File, apiKey: string): Promise<MetadataResult | null> => {
     if (!apiKey) {
       toast({
         title: "API Key Required",
@@ -171,29 +168,22 @@ DESCRIPTION (150-200 characters):
 CATEGORY:
 Choose main theme: Business, Technology, Nature, People, Food, Travel, Art, etc.
 
-KEYWORDS (exactly 50) - PRIORITY-BASED SEO OPTIMIZED:
-Create SEO-optimized keywords with priority ranking:
+KEYWORDS (exactly 50):
+Create balanced keywords across these categories:
+- IMAGE CONTENT (10 keywords): What you actually see in the image
+- NUMBERS (10 keywords): If numbers are visible in image, add number keywords after first 10: individual numbers (1, 2, 3), ordinals (1st, 2nd, 3rd, 5th, 10th), spelled ordinals (first, second, third, fifth, tenth), anniversary terms. If no numbers visible, use business keywords instead.
+- BUSINESS (8 keywords): Commercial terms, industries
+- VISUAL STYLE (8 keywords): Colors, composition, design style  
+- PURPOSE (6 keywords): Usage, application, context
+- INDUSTRY (4 keywords): Relevant sectors, markets
+- MATERIALS/OBJECTS (4 keywords): Physical elements, textures
 
-HIGH PRIORITY (Top 15 keywords):
-- PRIMARY VISIBLE (5): Exact elements visible in image (highest commercial value)
-- TRENDING 2024-2025 (5): Current market trends (ai technology, sustainability, remote work, digital transformation, mental health)
-- HIGH-VALUE COMMERCIAL (5): Premium terms buyers search for
-
-MEDIUM PRIORITY (Next 20 keywords):
-- NUMBERS (10): If numbers visible - individual (1,2,3), ordinals (1st,2nd,5th,10th), spelled (first,second,fifth,tenth). If no numbers: business keywords
-- BUSINESS TERMS (10): Industry, commercial, professional keywords
-
-LOW PRIORITY (Last 15 keywords):  
-- VISUAL STYLE (8): Colors, composition, design (avoid generic terms)
-- TECHNICAL/CONTEXT (7): Usage, materials, applications
-
-SEO KEYWORD RULES:
-- Prioritize by search volume and commercial value
-- Include long-tail keywords (3+ words) for less competition  
-- Focus on buyer intent keywords
-- Each keyword completely unique
-- Avoid generic terms
-- Consider trending topics for category relevance
+KEYWORD RULES:
+- Each must be completely unique (no synonyms)
+- Focus on buyer search behavior
+- Single words preferred
+- No generic terms like "image", "photo"
+- Ensure commercial value
 
 Response format:
 TITLE- [title here]
@@ -322,18 +312,13 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
         }
       });
 
-      const baseResult = { 
+      return { 
         title: title || 'Generated Title', 
         alternativeTitles: alternativeTitles.filter(t => t), 
         description: description || 'Generated description', 
         keywords: keywords.length > 0 ? keywords : ['generated', 'metadata'], 
         category: category || 'General' 
       };
-
-      // Apply SEO optimization to the result
-      const optimizedResult = await optimizeMetadata(baseResult);
-      
-      return optimizedResult;
 
     } catch (error) {
       console.error('Error:', error);
@@ -346,7 +331,7 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
     }
   };
 
-  const generateBulkMetadata = async (imageFiles: File[], apiKey: string): Promise<SeoOptimizedResult[]> => {
+  const generateBulkMetadata = async (imageFiles: File[], apiKey: string): Promise<MetadataResult[]> => {
     if (!apiKey) {
       toast({
         title: "API Key Required",
@@ -358,7 +343,7 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
 
     setLoading(true);
     setProcessingQueue(true);
-    const results: SeoOptimizedResult[] = [];
+    const results: MetadataResult[] = [];
     let hasErrors = false;
 
     // Show bulk processing guidance

@@ -6,9 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Copy, Star, Check, Plus, X, Edit3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { SeoMetrics } from './SeoMetrics';
-import { SeoOptimizedResult } from '@/types/seo';
-
 interface ImageWithMetadataProps {
   image: File;
   title: string;
@@ -16,9 +13,6 @@ interface ImageWithMetadataProps {
   description: string;
   keywords: string[];
   category: string;
-  seoMetrics?: SeoOptimizedResult['seoMetrics'];
-  seoKeywords?: SeoOptimizedResult['seoKeywords'];
-  optimizationSuggestions?: SeoOptimizedResult['optimizationSuggestions'];
   index: number;
   onRegenerate?: () => void;
   onMetadataUpdate?: (updatedData: {
@@ -40,9 +34,6 @@ export const ImageWithMetadata = ({
   description,
   keywords,
   category,
-  seoMetrics,
-  seoKeywords,
-  optimizationSuggestions,
   index,
   onRegenerate,
   onMetadataUpdate,
@@ -639,18 +630,6 @@ export const ImageWithMetadata = ({
                 </div>)}
             </div>
           </div>}
-
-        {/* SEO Metrics Section */}
-        {seoMetrics && seoKeywords && (
-          <div className="mt-6">
-            <SeoMetrics 
-              seoMetrics={seoMetrics}
-              seoKeywords={seoKeywords}
-              optimizationSuggestions={optimizationSuggestions || []}
-              showDetails={true}
-            />
-          </div>
-        )}
       </Card>
     </div>;
 };
