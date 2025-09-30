@@ -95,17 +95,17 @@ export const SeoMetrics: React.FC<SeoMetricsProps> = ({ seoAnalysis, onCopyKeywo
             variant="brandOutline"
             size="sm"
             onClick={() => {
-              const keywords = optimization.prioritizedKeywords.slice(0, 15).map(k => k.keyword);
-              copyToClipboard(keywords.join(', '), 'Priority keywords');
-              onCopyKeywords?.(keywords);
+              const allKeywords = optimization.prioritizedKeywords.map(k => k.keyword);
+              copyToClipboard(allKeywords.join(', '), 'All priority keywords');
+              onCopyKeywords?.(allKeywords);
             }}
           >
-            Copy Top 15
+            Copy All Keywords
           </Button>
         </div>
         
         <div className="grid gap-2">
-          {optimization.prioritizedKeywords.slice(0, 15).map((keywordData, index) => (
+          {optimization.prioritizedKeywords.map((keywordData, index) => (
             <div
               key={index}
               className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
