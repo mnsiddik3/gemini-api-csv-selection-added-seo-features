@@ -19,6 +19,7 @@ const Index = () => {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
+    topKeywords?: string[];
     category: string;
     image: File;
     processing?: boolean;
@@ -92,6 +93,7 @@ const Index = () => {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
+    topKeywords?: string[];
     selectedTitleIndex?: number;
   }) => {
     const updatedResults = [...results];

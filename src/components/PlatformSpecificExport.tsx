@@ -23,6 +23,7 @@ interface PlatformSpecificExportProps {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
+    topKeywords?: string[];
     category: string;
     selectedTitleIndex?: number;
   }>;
@@ -285,6 +286,11 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
         description = description.substring(0, platform.descriptionMaxLength - 3) + '...';
       }
 
+      // Use topKeywords if available, otherwise fall back to keywords
+      const keywordsToUse = result.topKeywords && result.topKeywords.length > 0 
+        ? result.topKeywords 
+        : result.keywords;
+
       const baseData = {
         filename: platform.name === 'shutterstock' 
           ? result.image.name.replace(/\.[^/.]+$/, ".eps").replace(/[\/\\\r\n\t]/g, "-") // Replace extension with .eps, clean special chars
@@ -294,7 +300,7 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
           ? result.image.name.replace(/\.[^/.]+$/, ".jpg") // Replace extension with .jpg for Vecteezy
           : result.image.name.replace(/\.[^/.]+$/, ""), // Remove extension for others
         title,
-        keywords: platform.formatKeywords(result.keywords),
+        keywords: platform.formatKeywords(keywordsToUse),
       };
 
       // Add platform-specific fields
