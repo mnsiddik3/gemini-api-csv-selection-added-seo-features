@@ -605,7 +605,8 @@ export const ImageWithMetadata = ({
           <SeoMetrics 
             seoAnalysis={seoAnalysis}
             onCopyKeywords={(keywords) => {
-              const updatedKeywords = [...topKeywords, ...keywords].slice(0, 50);
+              // Add Priority Keywords to the beginning of Top Keywords list
+              const updatedKeywords = [...keywords, ...topKeywords].slice(0, 50);
               setTopKeywords(updatedKeywords);
               onMetadataUpdate?.({
                 title: editTitleValue,
@@ -614,8 +615,8 @@ export const ImageWithMetadata = ({
                 keywords: updatedKeywords
               });
               toast({
-                title: "SEO Keywords Added!",
-                description: `${keywords.length} SEO-optimized keywords added.`
+                title: "Priority Keywords Added!",
+                description: `${keywords.length} priority keywords added to the beginning of Top Keywords.`
               });
             }}
           />
