@@ -91,17 +91,33 @@ export const SeoMetrics: React.FC<SeoMetricsProps> = ({ seoAnalysis, onCopyKeywo
               Priority Keywords (গুরুত্ব অনুযায়ী সাজানো)
             </h3>
           </div>
-          <Button
-            variant="brandOutline"
-            size="sm"
-            onClick={() => {
-              const keywords = optimization.prioritizedKeywords.slice(0, 15).map(k => k.keyword);
-              copyToClipboard(keywords.join(', '), 'Priority keywords');
-              onCopyKeywords?.(keywords);
-            }}
-          >
-            Copy Top 15
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="brandOutline"
+              size="sm"
+              onClick={() => {
+                const keywords = optimization.prioritizedKeywords.slice(0, 15).map(k => k.keyword);
+                copyToClipboard(keywords.join(', '), 'Priority keywords');
+                onCopyKeywords?.(keywords);
+              }}
+            >
+              Copy Top 15
+            </Button>
+            <Button
+              variant="brand"
+              size="sm"
+              onClick={() => {
+                const keywords = optimization.prioritizedKeywords.slice(0, 15).map(k => k.keyword);
+                onCopyKeywords?.(keywords);
+                toast({
+                  title: "Added to Top Keywords!",
+                  description: `${keywords.length} priority keywords added to Top Keywords section.`,
+                });
+              }}
+            >
+              Add to Top Keywords
+            </Button>
+          </div>
         </div>
         
         <div className="grid gap-2">
