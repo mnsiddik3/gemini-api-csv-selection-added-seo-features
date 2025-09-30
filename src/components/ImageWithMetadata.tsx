@@ -90,10 +90,26 @@ export const ImageWithMetadata = ({
     setEditDescriptionValue(description);
   }, [title, description]);
 
-  // Update top keywords when keywords change
+  // Update top keywords when keywords change - Priority Keywords first
   React.useEffect(() => {
-    setTopKeywords(keywords.slice(0, 45));
-  }, [keywords]);
+    if (seoAnalysis?.optimization?.prioritizedKeywords) {
+      // Get priority keywords first
+      const priorityKeywords = seoAnalysis.optimization.prioritizedKeywords
+        .slice(0, 15)
+        .map(k => k.keyword);
+      
+      // Get remaining keywords (excluding duplicates with priority keywords)
+      const remainingKeywords = keywords
+        .filter(keyword => !priorityKeywords.includes(keyword))
+        .slice(0, 30); // Limit remaining to 30 so total stays under 45
+      
+      // Combine: Priority keywords first, then remaining
+      const orderedKeywords = [...priorityKeywords, ...remainingKeywords].slice(0, 45);
+      setTopKeywords(orderedKeywords);
+    } else {
+      setTopKeywords(keywords.slice(0, 45));
+    }
+  }, [keywords, seoAnalysis]);
   const remainingKeywords = keywords.slice(45);
   const addToTopKeywords = (keyword: string) => {
     if (!topKeywords.includes(keyword)) {
