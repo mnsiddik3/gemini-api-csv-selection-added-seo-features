@@ -243,6 +243,7 @@ const Index = () => {
                 alternativeTitles={result.alternativeTitles}
                 description={result.description}
                 keywords={result.keywords}
+                topKeywords={result.topKeywords}
                 category={result.category}
                 index={index}
                 onRegenerate={() => handleSingleRegenerate(result.image, index)}

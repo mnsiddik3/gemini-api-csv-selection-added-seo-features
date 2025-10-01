@@ -16,6 +16,7 @@ interface ImageWithMetadataProps {
   alternativeTitles?: string[];
   description: string;
   keywords: string[];
+  topKeywords?: string[];
   category: string;
   index: number;
   onRegenerate?: () => void;
@@ -39,6 +40,7 @@ export const ImageWithMetadata = ({
   alternativeTitles,
   description,
   keywords,
+  topKeywords: initialTopKeywords,
   category,
   index,
   onRegenerate,
@@ -50,7 +52,7 @@ export const ImageWithMetadata = ({
   seoAnalysis
 }: ImageWithMetadataProps) => {
   const [copiedIndex, setCopiedIndex] = useState<string | null>(null);
-  const [topKeywords, setTopKeywords] = useState<string[]>(() => keywords.slice(0, 45));
+  const [topKeywords, setTopKeywords] = useState<string[]>(() => initialTopKeywords || keywords.slice(0, 45));
   const [customKeywordInput, setCustomKeywordInput] = useState('');
   const [editingKeywordIndex, setEditingKeywordIndex] = useState<number | null>(null);
   const [editKeywordValue, setEditKeywordValue] = useState('');

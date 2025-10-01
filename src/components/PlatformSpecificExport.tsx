@@ -267,6 +267,15 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
       return;
     }
 
+    console.log('🔍 Generating CSV for:', platform.name);
+    console.log('📊 Results data:', results.map(r => ({
+      filename: r.image.name,
+      topKeywordsCount: r.topKeywords?.length || 0,
+      keywordsCount: r.keywords.length,
+      hasTopKeywords: !!r.topKeywords,
+      topKeywordsSample: r.topKeywords?.slice(0, 5)
+    })));
+
     // Platform-specific CSV data preparation
     const csvData = results.map((result) => {
       // Get the selected title based on selectedTitleIndex
