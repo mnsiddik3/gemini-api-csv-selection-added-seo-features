@@ -93,40 +93,33 @@ export const ImageWithMetadata = ({
     setEditDescriptionValue(description);
   }, [title, description]);
 
-  // Update top keywords when keywords change - Priority Keywords first
+  // Update top keywords when keywords, seoAnalysis or initialTopKeywords change
   React.useEffect(() => {
+    // If initialTopKeywords is provided, use that (from parent state)
+    if (initialTopKeywords && initialTopKeywords.length > 0) {
+      setTopKeywords(initialTopKeywords);
+      return;
+    }
+    
+    // Otherwise generate from keywords and seoAnalysis
     let orderedKeywords: string[];
     
     if (seoAnalysis?.optimization?.prioritizedKeywords) {
-      // Get priority keywords first
       const priorityKeywords = seoAnalysis.optimization.prioritizedKeywords
         .slice(0, 15)
         .map(k => k.keyword);
       
-      // Get remaining keywords (excluding duplicates with priority keywords)
       const remainingKeywords = keywords
         .filter(keyword => !priorityKeywords.includes(keyword))
-        .slice(0, 30); // Limit remaining to 30 so total stays under 45
+        .slice(0, 30);
       
-      // Combine: Priority keywords first, then remaining
       orderedKeywords = [...priorityKeywords, ...remainingKeywords].slice(0, 45);
     } else {
       orderedKeywords = keywords.slice(0, 45);
     }
     
     setTopKeywords(orderedKeywords);
-    
-    // Update parent component with the new topKeywords
-    if (onMetadataUpdate) {
-      onMetadataUpdate({
-        title: editTitleValue,
-        alternativeTitles,
-        description: editDescriptionValue,
-        keywords,
-        topKeywords: orderedKeywords
-      });
-    }
-  }, [keywords, seoAnalysis]);
+  }, [keywords, seoAnalysis, initialTopKeywords]);
   const remainingKeywords = keywords.slice(45);
   const addToTopKeywords = (keyword: string) => {
     if (!topKeywords.includes(keyword)) {

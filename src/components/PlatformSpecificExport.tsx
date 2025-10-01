@@ -267,15 +267,6 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
       return;
     }
 
-    console.log('🔍 Generating CSV for:', platform.name);
-    console.log('📊 Results data:', results.map(r => ({
-      filename: r.image.name,
-      topKeywordsCount: r.topKeywords?.length || 0,
-      keywordsCount: r.keywords.length,
-      hasTopKeywords: !!r.topKeywords,
-      topKeywordsSample: r.topKeywords?.slice(0, 5)
-    })));
-
     // Platform-specific CSV data preparation
     const csvData = results.map((result) => {
       // Get the selected title based on selectedTitleIndex
@@ -373,16 +364,11 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
     }
     
     // Create CSV content with proper escaping
-    console.log('Platform:', platform.name);
-    console.log('Headers:', headers);
-    console.log('Sample row:', csvData[0]);
-    
     const csvContent = [
       headers.join(separator),
       ...csvData.map(row => 
         headers.map(header => {
           const value = row[header as keyof typeof row] || '';
-          console.log(`Header: ${header}, Value: ${value}`);
           
           // For Vecteezy, only quote fields that contain commas
           if (platform.name === 'vecteezy') {
@@ -399,11 +385,6 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
         }).join(separator)
       )
     ].join('\n');
-
-    // Debug: Check for BOM and header structure
-    console.log('CSV Headers line:', headers.join(separator));
-    console.log('First header character code:', headers[0].charCodeAt(0));
-    console.log('CSV first line bytes:', [...csvContent.split('\n')[0]].map(c => c.charCodeAt(0)));
 
     // Add BOM for better Excel compatibility  
     const csvWithBOM = '\uFEFF' + csvContent;
