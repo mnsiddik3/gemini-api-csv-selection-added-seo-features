@@ -24,6 +24,7 @@ interface ImageWithMetadataProps {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
+    topKeywords?: string[];
     selectedTitleIndex?: number;
   }) => void;
   processing?: boolean;
@@ -119,7 +120,8 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords: newKeywords
+        keywords,
+        topKeywords: newKeywords
       });
       toast({
         title: "Added!",
@@ -138,7 +140,8 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords: updatedKeywords
+        keywords,
+        topKeywords: updatedKeywords
       });
       toast({
         title: "Keywords Added!",
@@ -158,7 +161,8 @@ export const ImageWithMetadata = ({
       title: editTitleValue,
       alternativeTitles,
       description: editDescriptionValue,
-      keywords: updatedKeywords
+      keywords,
+      topKeywords: updatedKeywords
     });
     toast({
       title: "Deleted!",
@@ -181,7 +185,8 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords: updatedKeywords
+        keywords,
+        topKeywords: updatedKeywords
       });
       toast({
         title: "Updated!",
@@ -207,7 +212,8 @@ export const ImageWithMetadata = ({
       title: editTitleValue,
       alternativeTitles,
       description: editDescriptionValue,
-      keywords: topKeywords,
+      keywords,
+      topKeywords: topKeywords,
       selectedTitleIndex: titleIndex
     });
     toast({
@@ -231,7 +237,8 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords: topKeywords
+        keywords,
+        topKeywords: topKeywords
       });
       toast({
         title: "Updated!",
@@ -258,7 +265,8 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles: updatedAltTitles,
         description: editDescriptionValue,
-        keywords: topKeywords,
+        keywords,
+        topKeywords: topKeywords,
         selectedTitleIndex: selectedTitleIndex
       });
       
@@ -287,7 +295,8 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords: topKeywords
+        keywords,
+        topKeywords: topKeywords
       });
       toast({
         title: "Updated!",
