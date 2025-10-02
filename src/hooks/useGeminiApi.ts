@@ -150,6 +150,8 @@ export const useGeminiApi = () => {
       return null;
     }
 
+    setLoading(true);
+
     const makeApiCall = async (retryCount = 0, alternateOrder = false): Promise<any> => {
       try {
         // Convert image to base64
@@ -204,8 +206,8 @@ CATEGORY- [category]
 KEYWORDS- word1, word2, word3, [continue to 50 words]
         `;
 
-        // Use correct stable Gemini model names
-        const model = retryCount >= 2 ? 'gemini-2.5-pro' : 'gemini-2.5-flash';
+        // Always use flash model for speed
+        const model = 'gemini-2.5-flash';
         const parts = alternateOrder
           ? [
               { text: prompt },
@@ -232,14 +234,9 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);
 
-          // Handle overloaded 503 with smart retry/backoff
-          if (response.status === 503 && retryCount < 8) {
-            const delay = getAdaptiveDelay(retryCount, true);
-            toast({
-              title: "API Overloaded - Smart Retry",
-              description: `Switching to ${retryCount >= 2 ? 'Pro model' : 'Flash model'}. Waiting ${delay/1000}s... (${retryCount + 1}/8)`,
-              variant: "default",
-            });
+          // Handle overloaded 503 with minimal retry
+          if (response.status === 503 && retryCount < 3) {
+            const delay = 2000; // Fixed 2 second delay
             await new Promise(resolve => setTimeout(resolve, delay));
             return makeApiCall(retryCount + 1, alternateOrder);
           }
@@ -353,6 +350,8 @@ KEYWORDS- word1, word2, word3, [continue to 50 words]
         variant: "destructive",
       });
       return null;
+    } finally {
+      setLoading(false);
     }
   };
 
