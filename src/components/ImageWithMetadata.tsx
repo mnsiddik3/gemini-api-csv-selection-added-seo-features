@@ -16,7 +16,6 @@ interface ImageWithMetadataProps {
   alternativeTitles?: string[];
   description: string;
   keywords: string[];
-  topKeywords?: string[];
   category: string;
   index: number;
   onRegenerate?: () => void;
@@ -25,7 +24,6 @@ interface ImageWithMetadataProps {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
-    topKeywords?: string[];
     selectedTitleIndex?: number;
   }) => void;
   processing?: boolean;
@@ -40,7 +38,6 @@ export const ImageWithMetadata = ({
   alternativeTitles,
   description,
   keywords,
-  topKeywords: initialTopKeywords,
   category,
   index,
   onRegenerate,
@@ -52,7 +49,7 @@ export const ImageWithMetadata = ({
   seoAnalysis
 }: ImageWithMetadataProps) => {
   const [copiedIndex, setCopiedIndex] = useState<string | null>(null);
-  const [topKeywords, setTopKeywords] = useState<string[]>(() => initialTopKeywords || keywords.slice(0, 45));
+  const [topKeywords, setTopKeywords] = useState<string[]>(() => keywords.slice(0, 45));
   const [customKeywordInput, setCustomKeywordInput] = useState('');
   const [editingKeywordIndex, setEditingKeywordIndex] = useState<number | null>(null);
   const [editKeywordValue, setEditKeywordValue] = useState('');
@@ -93,33 +90,10 @@ export const ImageWithMetadata = ({
     setEditDescriptionValue(description);
   }, [title, description]);
 
-  // Update top keywords when keywords, seoAnalysis or initialTopKeywords change
+  // Update top keywords when keywords change
   React.useEffect(() => {
-    // If initialTopKeywords is provided, use that (from parent state)
-    if (initialTopKeywords && initialTopKeywords.length > 0) {
-      setTopKeywords(initialTopKeywords);
-      return;
-    }
-    
-    // Otherwise generate from keywords and seoAnalysis
-    let orderedKeywords: string[];
-    
-    if (seoAnalysis?.optimization?.prioritizedKeywords) {
-      const priorityKeywords = seoAnalysis.optimization.prioritizedKeywords
-        .slice(0, 15)
-        .map(k => k.keyword);
-      
-      const remainingKeywords = keywords
-        .filter(keyword => !priorityKeywords.includes(keyword))
-        .slice(0, 30);
-      
-      orderedKeywords = [...priorityKeywords, ...remainingKeywords].slice(0, 45);
-    } else {
-      orderedKeywords = keywords.slice(0, 45);
-    }
-    
-    setTopKeywords(orderedKeywords);
-  }, [keywords, seoAnalysis, initialTopKeywords]);
+    setTopKeywords(keywords.slice(0, 45));
+  }, [keywords]);
   const remainingKeywords = keywords.slice(45);
   const addToTopKeywords = (keyword: string) => {
     if (!topKeywords.includes(keyword)) {
@@ -129,8 +103,7 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords,
-        topKeywords: newKeywords
+        keywords: newKeywords
       });
       toast({
         title: "Added!",
@@ -149,8 +122,7 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords,
-        topKeywords: updatedKeywords
+        keywords: updatedKeywords
       });
       toast({
         title: "Keywords Added!",
@@ -170,8 +142,7 @@ export const ImageWithMetadata = ({
       title: editTitleValue,
       alternativeTitles,
       description: editDescriptionValue,
-      keywords,
-      topKeywords: updatedKeywords
+      keywords: updatedKeywords
     });
     toast({
       title: "Deleted!",
@@ -194,8 +165,7 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords,
-        topKeywords: updatedKeywords
+        keywords: updatedKeywords
       });
       toast({
         title: "Updated!",
@@ -221,8 +191,7 @@ export const ImageWithMetadata = ({
       title: editTitleValue,
       alternativeTitles,
       description: editDescriptionValue,
-      keywords,
-      topKeywords: topKeywords,
+      keywords: topKeywords,
       selectedTitleIndex: titleIndex
     });
     toast({
@@ -246,8 +215,7 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords,
-        topKeywords: topKeywords
+        keywords: topKeywords
       });
       toast({
         title: "Updated!",
@@ -274,8 +242,7 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles: updatedAltTitles,
         description: editDescriptionValue,
-        keywords,
-        topKeywords: topKeywords,
+        keywords: topKeywords,
         selectedTitleIndex: selectedTitleIndex
       });
       
@@ -304,8 +271,7 @@ export const ImageWithMetadata = ({
         title: editTitleValue,
         alternativeTitles,
         description: editDescriptionValue,
-        keywords,
-        topKeywords: topKeywords
+        keywords: topKeywords
       });
       toast({
         title: "Updated!",
@@ -639,8 +605,7 @@ export const ImageWithMetadata = ({
           <SeoMetrics 
             seoAnalysis={seoAnalysis}
             onCopyKeywords={(keywords) => {
-              // Add Priority Keywords to the beginning of Top Keywords list
-              const updatedKeywords = [...keywords, ...topKeywords].slice(0, 50);
+              const updatedKeywords = [...topKeywords, ...keywords].slice(0, 50);
               setTopKeywords(updatedKeywords);
               onMetadataUpdate?.({
                 title: editTitleValue,
@@ -649,8 +614,8 @@ export const ImageWithMetadata = ({
                 keywords: updatedKeywords
               });
               toast({
-                title: "Priority Keywords Added!",
-                description: `${keywords.length} priority keywords added to the beginning of Top Keywords.`
+                title: "SEO Keywords Added!",
+                description: `${keywords.length} SEO-optimized keywords added.`
               });
             }}
           />

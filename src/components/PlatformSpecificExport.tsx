@@ -23,7 +23,6 @@ interface PlatformSpecificExportProps {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
-    topKeywords?: string[];
     category: string;
     selectedTitleIndex?: number;
   }>;
@@ -286,11 +285,6 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
         description = description.substring(0, platform.descriptionMaxLength - 3) + '...';
       }
 
-      // Use topKeywords if available, otherwise fall back to keywords
-      const keywordsToUse = result.topKeywords && result.topKeywords.length > 0 
-        ? result.topKeywords 
-        : result.keywords;
-
       const baseData = {
         filename: platform.name === 'shutterstock' 
           ? result.image.name.replace(/\.[^/.]+$/, ".eps").replace(/[\/\\\r\n\t]/g, "-") // Replace extension with .eps, clean special chars
@@ -300,7 +294,7 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
           ? result.image.name.replace(/\.[^/.]+$/, ".jpg") // Replace extension with .jpg for Vecteezy
           : result.image.name.replace(/\.[^/.]+$/, ""), // Remove extension for others
         title,
-        keywords: platform.formatKeywords(keywordsToUse),
+        keywords: platform.formatKeywords(result.keywords),
       };
 
       // Add platform-specific fields
@@ -364,11 +358,16 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
     }
     
     // Create CSV content with proper escaping
+    console.log('Platform:', platform.name);
+    console.log('Headers:', headers);
+    console.log('Sample row:', csvData[0]);
+    
     const csvContent = [
       headers.join(separator),
       ...csvData.map(row => 
         headers.map(header => {
           const value = row[header as keyof typeof row] || '';
+          console.log(`Header: ${header}, Value: ${value}`);
           
           // For Vecteezy, only quote fields that contain commas
           if (platform.name === 'vecteezy') {
@@ -385,6 +384,11 @@ export const PlatformSpecificExport = ({ results }: PlatformSpecificExportProps)
         }).join(separator)
       )
     ].join('\n');
+
+    // Debug: Check for BOM and header structure
+    console.log('CSV Headers line:', headers.join(separator));
+    console.log('First header character code:', headers[0].charCodeAt(0));
+    console.log('CSV first line bytes:', [...csvContent.split('\n')[0]].map(c => c.charCodeAt(0)));
 
     // Add BOM for better Excel compatibility  
     const csvWithBOM = '\uFEFF' + csvContent;

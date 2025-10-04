@@ -29,7 +29,6 @@ interface CsvExportProps {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
-    topKeywords?: string[];
     category: string;
     selectedTitleIndex?: number;
   }>;
@@ -106,16 +105,11 @@ export const CsvExport = ({ results }: CsvExportProps) => {
         ? result.description.substring(0, platform.descriptionMaxLength - 3) + '...'
         : result.description;
 
-      // Use topKeywords if available, otherwise fall back to keywords
-      const keywordsToUse = result.topKeywords && result.topKeywords.length > 0 
-        ? result.topKeywords 
-        : result.keywords;
-
       return {
         filename: result.image.name,
         title,
         description,
-        keywords: platform.formatKeywords(keywordsToUse),
+        keywords: platform.formatKeywords(result.keywords),
         category: result.category
       };
     });

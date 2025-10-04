@@ -5,11 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { 
   TrendingUp, 
+  Target, 
   Star, 
   BarChart3, 
+  Lightbulb, 
   Copy,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Info
 } from 'lucide-react';
 import { SeoAnalysis } from '@/types/seo';
 import { useToast } from '@/hooks/use-toast';
@@ -88,33 +91,17 @@ export const SeoMetrics: React.FC<SeoMetricsProps> = ({ seoAnalysis, onCopyKeywo
               Priority Keywords (গুরুত্ব অনুযায়ী সাজানো)
             </h3>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="brandOutline"
-              size="sm"
-              onClick={() => {
-                const keywords = optimization.prioritizedKeywords.slice(0, 15).map(k => k.keyword);
-                copyToClipboard(keywords.join(', '), 'Priority keywords');
-                onCopyKeywords?.(keywords);
-              }}
-            >
-              Copy Top 15
-            </Button>
-            <Button
-              variant="brand"
-              size="sm"
-              onClick={() => {
-                const keywords = optimization.prioritizedKeywords.slice(0, 15).map(k => k.keyword);
-                onCopyKeywords?.(keywords);
-                toast({
-                  title: "Added to Top Keywords!",
-                  description: `${keywords.length} priority keywords added to Top Keywords section.`,
-                });
-              }}
-            >
-              Add to Top Keywords
-            </Button>
-          </div>
+          <Button
+            variant="brandOutline"
+            size="sm"
+            onClick={() => {
+              const keywords = optimization.prioritizedKeywords.slice(0, 15).map(k => k.keyword);
+              copyToClipboard(keywords.join(', '), 'Priority keywords');
+              onCopyKeywords?.(keywords);
+            }}
+          >
+            Copy Top 15
+          </Button>
         </div>
         
         <div className="grid gap-2">
@@ -234,7 +221,7 @@ export const SeoMetrics: React.FC<SeoMetricsProps> = ({ seoAnalysis, onCopyKeywo
         {/* Low Competition Keywords */}
         <Card className="p-6">
           <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="w-5 h-5 text-orange-600" />
+            <Target className="w-5 h-5 text-orange-600" />
             <h4 className="font-semibold text-foreground">Low Competition</h4>
             <Badge variant="outline" className="text-xs">
               {optimization.lowCompetitionKeywords.length}
@@ -309,6 +296,94 @@ export const SeoMetrics: React.FC<SeoMetricsProps> = ({ seoAnalysis, onCopyKeywo
           )}
         </Card>
       </div>
+
+      {/* Competitor Insights */}
+      <Card className="p-6 bg-gradient-secondary/5 border-brand-secondary/20">
+        <div className="flex items-center gap-2 mb-4">
+          <Target className="w-5 h-5 text-brand-secondary" />
+          <h3 className="text-lg font-semibold text-foreground">
+            Competitor Analysis (সফল images এর pattern)
+          </h3>
+        </div>
+        
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Common Successful Patterns:</h4>
+            <div className="flex flex-wrap gap-2">
+              {competitorInsights.commonPatterns.map((pattern, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="text-xs border-brand-secondary/30 text-brand-secondary cursor-pointer"
+                  onClick={() => copyToClipboard(pattern, 'Pattern')}
+                >
+                  {pattern}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Successful Keyword Combinations:</h4>
+            <div className="flex flex-wrap gap-2">
+              {competitorInsights.successfulKeywordCombinations.map((combo, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="text-xs border-green-500/30 text-green-600 cursor-pointer"
+                  onClick={() => copyToClipboard(combo, 'Keyword combination')}
+                >
+                  {combo}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-medium text-foreground mb-2">Market Gaps & Opportunities:</h4>
+            <div className="flex flex-wrap gap-2">
+              {competitorInsights.marketGaps.map((gap, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="text-xs border-orange-500/30 text-orange-600 cursor-pointer"
+                  onClick={() => copyToClipboard(gap, 'Market gap')}
+                >
+                  {gap}
+                </Badge>
+              ))}
+            </div>
+          </div>
+          
+          <div className="p-3 bg-muted/30 rounded-lg">
+            <div className="flex items-start gap-2">
+              <Info className="w-4 h-4 text-brand-secondary mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-foreground">
+                <strong>Recommendation:</strong> {competitorInsights.recommendedFocus}
+              </p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* SEO Recommendations */}
+      <Card className="p-6 bg-gradient-accent/5 border-brand-accent/20">
+        <div className="flex items-center gap-2 mb-4">
+          <Lightbulb className="w-5 h-5 text-brand-accent" />
+          <h3 className="text-lg font-semibold text-foreground">SEO Recommendations</h3>
+        </div>
+        
+        <div className="space-y-3">
+          {recommendations.map((recommendation, index) => (
+            <div key={index} className="flex items-start gap-3 p-3 bg-muted/20 rounded-lg">
+              <div className="w-6 h-6 bg-brand-accent/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-xs font-medium text-brand-accent">{index + 1}</span>
+              </div>
+              <p className="text-sm text-foreground leading-relaxed">{recommendation}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 };

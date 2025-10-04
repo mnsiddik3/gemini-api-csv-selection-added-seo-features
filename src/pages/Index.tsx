@@ -19,7 +19,6 @@ const Index = () => {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
-    topKeywords?: string[];
     category: string;
     image: File;
     processing?: boolean;
@@ -60,25 +59,11 @@ const Index = () => {
 
       const result = await generateMetadata(imageFile, apiKey);
       if (result) {
-        // Generate topKeywords immediately based on seoAnalysis
-        let topKeywords: string[];
-        if (result.seoAnalysis?.optimization?.prioritizedKeywords) {
-          const priorityKeywords = result.seoAnalysis.optimization.prioritizedKeywords
-            .slice(0, 15)
-            .map(k => k.keyword);
-          const remainingKeywords = result.keywords
-            .filter(keyword => !priorityKeywords.includes(keyword))
-            .slice(0, 30);
-          topKeywords = [...priorityKeywords, ...remainingKeywords].slice(0, 45);
-        } else {
-          topKeywords = result.keywords.slice(0, 45);
-        }
-        
-        // Update the result for this specific image with topKeywords
+        // Update the result for this specific image
         setResults(prev => 
           prev.map((item, index) => 
             index === i 
-              ? { ...result, image: imageFile, processing: false, selectedTitleIndex: 0, topKeywords }
+              ? { ...result, image: imageFile, processing: false, selectedTitleIndex: 0 }
               : item
           )
         );
@@ -107,7 +92,6 @@ const Index = () => {
     alternativeTitles?: string[];
     description: string;
     keywords: string[];
-    topKeywords?: string[];
     selectedTitleIndex?: number;
   }) => {
     const updatedResults = [...results];
@@ -257,7 +241,6 @@ const Index = () => {
                 alternativeTitles={result.alternativeTitles}
                 description={result.description}
                 keywords={result.keywords}
-                topKeywords={result.topKeywords}
                 category={result.category}
                 index={index}
                 onRegenerate={() => handleSingleRegenerate(result.image, index)}
